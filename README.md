@@ -4,24 +4,6 @@ Predicts **APM** (actions per minute) and **Reaction Time** from Age, Sleep Hour
 Energy Drinks, and Game Genre, using a linear regression fit on the
 `esports_gaming_biometrics_250k.csv` dataset.
 
-## Why APM / Reaction Time instead of Win/Loss
-
-Match_Outcome (Win/Loss) is essentially unpredictable from these inputs: a
-logistic regression combining Age, Sleep_Hours, Energy_Drinks and Game_Genre
-only reaches an AUC of ~0.53 (0.50 = random chance). This matches how
-competitive matchmaking is designed to push win rates toward 50% regardless
-of a single player's biometrics.
-
-APM and Reaction_Time_ms, in contrast, have real, explainable relationships
-with these inputs:
-
-- **APM** — test R² = 0.68. Driven mainly by Game_Genre (Fighting/MOBA much
-  higher than Battle Royale) and Energy_Drinks (+10 APM per drink).
-- **Reaction_Time_ms** — test R² = 0.25. Driven mainly by Sleep_Hours
-  (less sleep = slower reactions) and Age (older = slightly slower).
-
-See `analysis.py` for the full model-fitting code and coefficients.
-
 ## How to run
 
 ```bash
