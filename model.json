@@ -1,0 +1,59 @@
+{
+  "features": [
+    "Age",
+    "Sleep_Hours",
+    "Energy_Drinks"
+  ],
+  "genres": [
+    "Battle Royale",
+    "FPS",
+    "Fighting",
+    "MOBA"
+  ],
+  "baseline_genre": "Battle Royale",
+  "targets": {
+    "APM": {
+      "coefficients": {
+        "Intercept": 104.82368546185502,
+        "Age": 0.05883103931522893,
+        "Sleep_Hours": 0.03166014683893714,
+        "Energy_Drinks": 10.190144282599851,
+        "FPS": 40.22275578456954,
+        "Fighting": 180.70185345100296,
+        "MOBA": 140.57501474583884
+      },
+      "train_r2": 0.6801,
+      "test_r2": 0.6766,
+      "residual_std": 43.7
+    },
+    "Reaction_Time_ms": {
+      "coefficients": {
+        "Intercept": 262.0400975248402,
+        "Age": 1.479906292763239,
+        "Sleep_Hours": -4.9435220816341205,
+        "Energy_Drinks": -0.33693916546979824,
+        "FPS": -0.17058092608361441,
+        "Fighting": -0.11452130036808035,
+        "MOBA": -0.11070393658373746
+      },
+      "train_r2": 0.2381,
+      "test_r2": 0.2465,
+      "residual_std": 16.59
+    }
+  },
+  "n_rows": 250000,
+  "feature_ranges": {
+    "Age": [
+      16,
+      40
+    ],
+    "Sleep_Hours": [
+      2.0,
+      11.0
+    ],
+    "Energy_Drinks": [
+      0,
+      4
+    ]
+  }
+}
