@@ -12,6 +12,11 @@
     --accent2: #f59e6e;
     --text: #e8edf4;
     --muted: #8b95a8;
+    --zone-resting: #6ee7a0;
+    --zone-normal: #6ee7f5;
+    --zone-elevated: #f5d76e;
+    --zone-challenge: #f59e6e;
+    --zone-risk: #f56e6e;
   }
   * { box-sizing: border-box; }
   body {
@@ -21,36 +26,46 @@
     color: var(--text);
     padding: 32px 16px;
   }
-  .wrap {
-    max-width: 960px;
-    margin: 0 auto;
+  .wrap { max-width: 960px; margin: 0 auto; }
+  h1 { font-size: 1.6rem; margin-bottom: 4px; }
+  .subtitle { color: var(--muted); margin-bottom: 20px; font-size: 0.95rem; }
+
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    border-bottom: 1px solid #2c3650;
   }
-  h1 {
-    font-size: 1.6rem;
-    margin-bottom: 4px;
-  }
-  .subtitle {
+  .tab-btn {
+    background: none;
+    border: none;
     color: var(--muted);
-    margin-bottom: 28px;
     font-size: 0.95rem;
+    padding: 10px 16px;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
   }
+  .tab-btn.active {
+    color: var(--text);
+    border-bottom: 2px solid var(--accent);
+  }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
   .grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 24px;
   }
-  @media (max-width: 760px) {
-    .grid { grid-template-columns: 1fr; }
-  }
+  @media (max-width: 760px) { .grid { grid-template-columns: 1fr; } }
+
   .panel {
     background: var(--panel);
     border-radius: 14px;
     padding: 24px;
     box-shadow: 0 4px 20px rgba(0,0,0,0.25);
   }
-  .control {
-    margin-bottom: 22px;
-  }
+  .control { margin-bottom: 22px; }
   .control label {
     display: flex;
     justify-content: space-between;
@@ -58,13 +73,52 @@
     margin-bottom: 8px;
     color: var(--muted);
   }
-  .control label span.val {
-    color: var(--text);
-    font-weight: 600;
-  }
+  .control label span.val { color: var(--text); font-weight: 600; }
+
+  /* Fully custom range input: the track stays uniformly grey its whole
+     length (no browser auto-fill up to the thumb), only the thumb itself
+     is colored/highlighted. */
   input[type=range] {
+    -webkit-appearance: none;
+    appearance: none;
     width: 100%;
-    accent-color: var(--accent);
+    height: 18px;
+    background: transparent;
+    outline: none;
+  }
+  input[type=range]::-webkit-slider-runnable-track {
+    height: 8px;
+    border-radius: 4px;
+    background: #2c3650;
+  }
+  input[type=range]::-moz-range-track {
+    height: 8px;
+    border-radius: 4px;
+    background: #2c3650;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    margin-top: -5px; /* vertically center an 18px thumb on an 8px track */
+    cursor: pointer;
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent);
+    border: none;
+    cursor: pointer;
+  }
+  input[type=range]:focus::-webkit-slider-thumb {
+    box-shadow: 0 0 0 4px rgba(110, 231, 245, 0.35);
+  }
+  input[type=range]:focus::-moz-range-thumb {
+    box-shadow: 0 0 0 4px rgba(110, 231, 245, 0.35);
   }
   select {
     width: 100%;
@@ -75,6 +129,67 @@
     color: var(--text);
     font-size: 0.95rem;
   }
+
+  /* Age-bucket highlight behind the Personal Zone age slider: shows which
+     5-year age bracket (used for the percentile comparison) you're in. */
+  .age-slider-wrap { position: relative; }
+  .age-slider-wrap input[type=range] {
+    position: relative;
+    z-index: 1;
+    background: transparent;
+  }
+  .age-slider-wrap input[type=range]::-webkit-slider-runnable-track { background: transparent; }
+  .age-slider-wrap input[type=range]::-moz-range-track { background: transparent; }
+  .age-bucket-bg {
+    position: absolute;
+    top: 5px;
+    left: 0;
+    right: 0;
+    height: 8px;
+    display: flex;
+    gap: 2px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .age-bucket-bg .bucket-seg {
+    flex: 1;
+    border-radius: 4px;
+    background: #2c3650;
+    transition: background 0.2s ease;
+  }
+  .age-bucket-bg .bucket-seg.active {
+    background: var(--accent);
+    opacity: 0.45;
+  }
+  .age-bucket-labels {
+    display: flex;
+    gap: 2px;
+    margin-top: 4px;
+  }
+  .age-bucket-labels span {
+    flex: 1;
+    text-align: center;
+    font-size: 0.68rem;
+    color: var(--muted);
+  }
+  .age-bucket-labels span.active { color: var(--accent); font-weight: 600; }
+
+  /* Generic tick labels under a discrete-step slider (e.g. 0-4 energy drinks) */
+  .tick-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+  }
+  .tick-labels span {
+    font-size: 0.7rem;
+    color: var(--muted);
+    width: 18px;
+    text-align: center;
+  }
+  .tick-labels span:first-child { text-align: left; }
+  .tick-labels span:last-child { text-align: right; }
+  .tick-labels span.active { color: var(--accent); font-weight: 700; }
+
   .result-card {
     text-align: center;
     padding: 20px 10px;
@@ -89,23 +204,12 @@
     letter-spacing: 0.05em;
     margin-bottom: 6px;
   }
-  .result-card .value {
-    font-size: 2.6rem;
-    font-weight: 700;
-    line-height: 1;
-  }
-  .result-card .range {
-    color: var(--muted);
-    font-size: 0.8rem;
-    margin-top: 6px;
-  }
-  .result-card .r2 {
-    margin-top: 10px;
-    font-size: 0.75rem;
-    color: var(--muted);
-  }
+  .result-card .value { font-size: 2.6rem; font-weight: 700; line-height: 1; }
+  .result-card .range { color: var(--muted); font-size: 0.8rem; margin-top: 6px; }
+  .result-card .r2 { margin-top: 10px; font-size: 0.75rem; color: var(--muted); }
   #apmCard .value { color: var(--accent); }
   #rtCard .value { color: var(--accent2); }
+
   .bar-bg {
     width: 100%;
     height: 8px;
@@ -114,102 +218,225 @@
     margin-top: 10px;
     overflow: hidden;
   }
-  .bar-fill {
-    height: 100%;
-    border-radius: 4px;
-    transition: width 0.25s ease;
+  .bar-fill { height: 100%; border-radius: 4px; transition: width 0.25s ease; }
+
+  /* Personal Zone specific */
+  .zone-badge {
+    display: inline-block;
+    padding: 6px 16px;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin-top: 8px;
   }
-  footer {
-    margin-top: 28px;
+  .zone-track {
+    position: relative;
+    width: 100%;
+    height: 14px;
+    border-radius: 7px;
+    margin: 18px 0 8px 0;
+    background: linear-gradient(to right,
+      var(--zone-resting) 0%, var(--zone-resting) 20%,
+      var(--zone-normal) 20%, var(--zone-normal) 45%,
+      var(--zone-elevated) 45%, var(--zone-elevated) 70%,
+      var(--zone-challenge) 70%, var(--zone-challenge) 88%,
+      var(--zone-risk) 88%, var(--zone-risk) 100%);
+  }
+  .zone-marker {
+    position: absolute;
+    top: -6px;
+    width: 4px;
+    height: 26px;
+    background: white;
+    border-radius: 2px;
+    transform: translateX(-2px);
+    transition: left 0.25s ease;
+  }
+  .zone-legend {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.7rem;
     color: var(--muted);
-    font-size: 0.78rem;
+    margin-bottom: 18px;
+  }
+  .callout {
+    background: #11182a;
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 0.88rem;
+    margin-top: 14px;
     line-height: 1.5;
   }
-  .status {
-    font-size: 0.8rem;
+  .callout b { color: var(--text); }
+  .disclaimer {
+    margin-top: 20px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    border: 1px dashed #3a4560;
+    font-size: 0.82rem;
     color: var(--muted);
+    line-height: 1.55;
   }
+  .disclaimer b { color: var(--text); }
+
+  footer { margin-top: 28px; color: var(--muted); font-size: 0.78rem; line-height: 1.5; }
+  .status { font-size: 0.8rem; color: var(--muted); }
 </style>
 </head>
 <body>
 <div class="wrap">
   <h1>Esports Performance Predictor</h1>
-  <div class="subtitle">Predicting in-match APM and reaction time from sleep, energy drinks, age and game genre.</div>
+  <div class="subtitle">Based on a linear regression fit on 250,000 synthetic esports biometric records (course dataset).</div>
 
-  <div class="grid">
-    <div class="panel">
-      <div class="control">
-        <label>Age <span class="val" id="ageVal">24</span> years</label>
-        <input type="range" id="age" min="16" max="40" value="24" step="1">
-      </div>
-      <div class="control">
-        <label>Sleep <span class="val" id="sleepVal">7.0</span> hours</label>
-        <input type="range" id="sleep" min="3" max="10" value="7" step="0.1">
-      </div>
-      <div class="control">
-        <label>Energy drinks <span class="val" id="energyVal">1</span></label>
-        <input type="range" id="energy" min="0" max="5" value="1" step="1">
-      </div>
-      <div class="control">
-        <label>Game genre</label>
-        <select id="genre">
-          <option>Battle Royale</option>
-          <option>FPS</option>
-          <option>Fighting</option>
-          <option>MOBA</option>
-        </select>
-      </div>
-      <div class="status" id="status">Loading model...</div>
-    </div>
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="personal">Personal Zone</button>
+    <button class="tab-btn" data-tab="population">Population Explorer</button>
+  </div>
 
-    <div class="panel">
-      <div class="result-card" id="apmCard">
-        <div class="label">Predicted APM</div>
-        <div class="value"><span id="apmValue">--</span></div>
-        <div class="range" id="apmRange">range --</div>
-        <div class="bar-bg"><div class="bar-fill" id="apmBar" style="background: var(--accent); width:0%;"></div></div>
-        <div class="r2" id="apmR2"></div>
+  <!-- ================= PERSONAL ZONE TAB ================= -->
+  <div class="tab-panel active" id="tab-personal">
+    <div class="grid">
+      <div class="panel">
+        <div class="control">
+          <label>Your age <span class="val" id="pAgeVal">24</span> years</label>
+          <div class="age-slider-wrap">
+            <div class="age-bucket-bg" id="ageBucketBg"></div>
+            <input type="range" id="pAge" min="16" max="40" value="24" step="1">
+          </div>
+          <div class="age-bucket-labels" id="ageBucketLabels"></div>
+        </div>
+        <div class="control">
+          <label>Energy drinks consumed <span class="val" id="pEnergyVal">0</span></label>
+          <input type="range" id="pEnergy" min="0" max="4" value="0" step="1">
+          <div class="tick-labels" id="pEnergyTicks">
+            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span>
+          </div>
+        </div>
+        <div class="control">
+          <label>Game genre you play</label>
+          <select id="pGenre">
+            <option>Battle Royale</option>
+            <option>FPS</option>
+            <option>Fighting</option>
+            <option>MOBA</option>
+          </select>
+        </div>
+        <div class="status" id="pStatus">Loading model...</div>
       </div>
-      <div class="result-card" id="rtCard">
-        <div class="label">Predicted Reaction Time</div>
-        <div class="value"><span id="rtValue">--</span> ms</div>
-        <div class="range" id="rtRange">range --</div>
-        <div class="bar-bg"><div class="bar-fill" id="rtBar" style="background: var(--accent2); width:0%;"></div></div>
-        <div class="r2" id="rtR2"></div>
+
+      <div class="panel">
+        <div class="result-card">
+          <div class="label">Estimated heart rate</div>
+          <div class="value" id="hrValue" style="color: var(--accent);">--</div>
+          <div class="range">beats per minute</div>
+          <div class="zone-badge" id="zoneBadge">--</div>
+
+          <div class="zone-track">
+            <div class="zone-marker" id="zoneMarker" style="left: 0%;"></div>
+          </div>
+          <div class="zone-legend">
+            <span>Resting</span><span>Normal</span><span>Elevated</span><span>Challenge</span><span>Risk</span>
+          </div>
+
+          <div class="callout" id="zoneCallout">
+            Move the sliders to see your estimated zone.
+          </div>
+        </div>
+
+        <div class="disclaimer">
+          <b>What this model knows about you</b>: age, number of energy drinks, and game genre.
+          <b>What it doesn't know</b>: your personal caffeine tolerance, actual resting heart rate, medication,
+          anxiety, hydration, sleep, or prior habits. (Sleep was tested and dropped here: it has effectively
+          zero relationship with heart rate in this dataset, correlation &minus;0.0004, so including a sleep
+          slider would have been misleading. Sleep does matter a lot for reaction time, see the Population
+          Explorer tab.) The zone shown compares your <i>estimated</i> heart rate to real players your age in
+          this dataset, it is not a medical reading of you specifically.
+        </div>
       </div>
     </div>
   </div>
 
-  <footer>
-    Model: linear regression fit on 250,000 synthetic esports biometric records (course dataset).
-    APM model test R&sup2; shown above explains most of the variance; Reaction Time test R&sup2; is lower,
-    so its prediction is shown with a wider uncertainty range. Win/Loss was not modeled: a combined
-    logistic regression on these same inputs achieved an AUC of ~0.53 (0.50 = random chance), i.e. no
-    meaningful signal, consistent with matchmaking systems pushing win rates toward 50%.
-  </footer>
+  <!-- ================= POPULATION EXPLORER TAB ================= -->
+  <div class="tab-panel" id="tab-population">
+    <div class="grid">
+      <div class="panel">
+        <div class="control">
+          <label>Age <span class="val" id="ageVal">24</span> years</label>
+          <input type="range" id="age" min="16" max="40" value="24" step="1">
+        </div>
+        <div class="control">
+          <label>Sleep <span class="val" id="sleepVal">7.0</span> hours</label>
+          <input type="range" id="sleep" min="3" max="10" value="7" step="0.1">
+        </div>
+        <div class="control">
+          <label>Energy drinks <span class="val" id="energyVal">1</span></label>
+          <input type="range" id="energy" min="0" max="4" value="1" step="1">
+          <div class="tick-labels" id="energyTicks">
+            <span>0</span><span>1</span><span>2</span><span>3</span><span>4</span>
+          </div>
+        </div>
+        <div class="control">
+          <label>Game genre</label>
+          <select id="genre">
+            <option>Battle Royale</option>
+            <option>FPS</option>
+            <option>Fighting</option>
+            <option>MOBA</option>
+          </select>
+        </div>
+        <div class="status" id="status">Loading model...</div>
+      </div>
+
+      <div class="panel">
+        <div class="result-card" id="apmCard">
+          <div class="label">Predicted APM</div>
+          <div class="value"><span id="apmValue">--</span></div>
+          <div class="range" id="apmRange">range --</div>
+          <div class="bar-bg"><div class="bar-fill" id="apmBar" style="background: var(--accent); width:0%;"></div></div>
+          <div class="r2" id="apmR2"></div>
+        </div>
+        <div class="result-card" id="rtCard">
+          <div class="label">Predicted Reaction Time</div>
+          <div class="value"><span id="rtValue">--</span> ms</div>
+          <div class="range" id="rtRange">range --</div>
+          <div class="bar-bg"><div class="bar-fill" id="rtBar" style="background: var(--accent2); width:0%;"></div></div>
+          <div class="r2" id="rtR2"></div>
+        </div>
+      </div>
+    </div>
+
+    <footer>
+      This tab shows the <b>average</b> relationship across all 250,000 players in the dataset (exploratory view).
+      APM model test R&sup2; = 0.68, explaining most of the variance. Reaction Time test R&sup2; = 0.25, lower, so
+      its prediction is shown with a wider uncertainty range. Win/Loss was not modeled here: a combined logistic
+      regression on these same inputs achieved an AUC of ~0.53 (0.50 = random chance), i.e. no meaningful signal,
+      consistent with matchmaking systems pushing win rates toward 50%.
+    </footer>
+  </div>
 </div>
 
 <script>
-const ageEl = document.getElementById('age');
-const sleepEl = document.getElementById('sleep');
-const energyEl = document.getElementById('energy');
-const genreEl = document.getElementById('genre');
+// ---------- Tab switching ----------
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
 
-const ageVal = document.getElementById('ageVal');
-const sleepVal = document.getElementById('sleepVal');
-const energyVal = document.getElementById('energyVal');
-const statusEl = document.getElementById('status');
-
+// ---------- Shared ----------
 let modelInfo = null;
-let debounceTimer = null;
-
 async function loadModelInfo() {
   try {
     const res = await fetch('/api/model-info');
     modelInfo = await res.json();
-    statusEl.textContent = `Model trained on ${modelInfo.n_rows.toLocaleString()} rows.`;
+    document.getElementById('status').textContent = `Model trained on ${modelInfo.n_rows.toLocaleString()} rows.`;
+    document.getElementById('pStatus').textContent = `Model trained on ${modelInfo.n_rows.toLocaleString()} rows.`;
   } catch (e) {
-    statusEl.textContent = 'Could not load model info.';
+    document.getElementById('status').textContent = 'Could not load model info.';
+    document.getElementById('pStatus').textContent = 'Could not load model info.';
   }
 }
 
@@ -218,18 +445,120 @@ function setBar(el, value, min, max) {
   el.style.width = pct + '%';
 }
 
-async function updatePrediction() {
-  const age = ageEl.value;
-  const sleep = sleepEl.value;
-  const energy = energyEl.value;
-  const genre = genreEl.value;
+function highlightTick(containerId, value) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  Array.from(container.children).forEach((span, i) => {
+    span.classList.toggle('active', i === Number(value));
+  });
+}
 
-  ageVal.textContent = age;
-  sleepVal.textContent = parseFloat(sleep).toFixed(1);
-  energyVal.textContent = energy;
+// ---------- Personal Zone tab ----------
+const pAgeEl = document.getElementById('pAge');
+const pEnergyEl = document.getElementById('pEnergy');
+const pGenreEl = document.getElementById('pGenre');
+
+const zoneColors = {
+  resting: 'var(--zone-resting)',
+  normal: 'var(--zone-normal)',
+  elevated: 'var(--zone-elevated)',
+  challenge: 'var(--zone-challenge)',
+  risk: 'var(--zone-risk)',
+};
+
+let personalDebounce = null;
+
+// Must match AGE_BUCKETS in analysis.py / the heart_rate_age_buckets model.json
+const AGE_BUCKETS = [[16, 20], [21, 25], [26, 30], [31, 35], [36, 40]];
+
+function renderAgeBuckets(age) {
+  const bg = document.getElementById('ageBucketBg');
+  const labels = document.getElementById('ageBucketLabels');
+  if (bg.childElementCount === 0) {
+    AGE_BUCKETS.forEach(() => {
+      const seg = document.createElement('div');
+      seg.className = 'bucket-seg';
+      bg.appendChild(seg);
+    });
+    AGE_BUCKETS.forEach(([lo, hi]) => {
+      const span = document.createElement('span');
+      span.textContent = `${lo}-${hi}`;
+      labels.appendChild(span);
+    });
+  }
+  AGE_BUCKETS.forEach(([lo, hi], i) => {
+    const inBucket = age >= lo && age <= hi;
+    bg.children[i].classList.toggle('active', inBucket);
+    labels.children[i].classList.toggle('active', inBucket);
+  });
+}
+
+async function updatePersonalZone() {
+  const age = pAgeEl.value, energy = pEnergyEl.value, genre = pGenreEl.value;
+  document.getElementById('pAgeVal').textContent = age;
+  document.getElementById('pEnergyVal').textContent = energy;
+  renderAgeBuckets(parseInt(age, 10));
+  highlightTick('pEnergyTicks', energy);
+
+  const params = new URLSearchParams({ age, energy_drinks: energy, genre });
+  try {
+    const res = await fetch(`/api/personal-zone?${params.toString()}`);
+    const data = await res.json();
+
+    document.getElementById('hrValue').textContent = data.heart_rate_bpm;
+
+    const badge = document.getElementById('zoneBadge');
+    badge.textContent = data.zone_label;
+    badge.style.background = zoneColors[data.zone_key];
+    badge.style.color = '#0f1420';
+
+    // Position marker along the track: 0% at p50-20 (approx resting floor), 100% at p95+margin
+    const p = data.percentiles;
+    const floor = p.p50 - (p.p75 - p.p50) * 1.5;
+    const ceil = p.p95 + (p.p95 - p.p90) * 1.5;
+    const pct = Math.max(0, Math.min(100, ((data.heart_rate_bpm - floor) / (ceil - floor)) * 100));
+    document.getElementById('zoneMarker').style.left = pct + '%';
+
+    let calloutText = `Compared to ${data.age_bucket_n.toLocaleString()} players aged ${data.age_bucket} in this dataset: `;
+    calloutText += `median heart rate is ${p.p50} bpm, 90th percentile is ${p.p90} bpm, 95th percentile is ${p.p95} bpm. `;
+
+    if (data.challenge_zone_drinks === null) {
+      calloutText += `Within the observed 0-4 energy drink range, this profile does not reach the Challenge Zone.`;
+    } else if (data.challenge_zone_drinks <= energy) {
+      calloutText += `This profile is already at or past the Challenge Zone threshold (reached at ${data.challenge_zone_drinks} drink${data.challenge_zone_drinks === 1 ? '' : 's'}).`;
+    } else {
+      calloutText += `At this age/sleep/genre, the Challenge Zone is reached at <b>${data.challenge_zone_drinks} energy drink${data.challenge_zone_drinks === 1 ? '' : 's'}</b>.`;
+    }
+    if (data.risk_zone_drinks !== null) {
+      calloutText += ` The High Intensity Zone is reached at <b>${data.risk_zone_drinks} drink${data.risk_zone_drinks === 1 ? '' : 's'}</b>.`;
+    }
+    document.getElementById('zoneCallout').innerHTML = calloutText;
+  } catch (e) {
+    document.getElementById('pStatus').textContent = 'Prediction request failed.';
+  }
+}
+
+function debouncedPersonal() {
+  clearTimeout(personalDebounce);
+  personalDebounce = setTimeout(updatePersonalZone, 60);
+}
+[pAgeEl, pEnergyEl, pGenreEl].forEach(el => el.addEventListener('input', debouncedPersonal));
+
+// ---------- Population Explorer tab ----------
+const ageEl = document.getElementById('age');
+const sleepEl = document.getElementById('sleep');
+const energyEl = document.getElementById('energy');
+const genreEl = document.getElementById('genre');
+let populationDebounce = null;
+
+async function updatePopulation() {
+  const age = ageEl.value, sleep = sleepEl.value, energy = energyEl.value, genre = genreEl.value;
+  document.getElementById('ageVal').textContent = age;
+  document.getElementById('sleepVal').textContent = parseFloat(sleep).toFixed(1);
+  document.getElementById('energyVal').textContent = energy;
+  highlightTick('energyTicks', energy);
 
   const params = new URLSearchParams({ age, sleep_hours: sleep, energy_drinks: energy, genre });
-
   try {
     const res = await fetch(`/api/predict?${params.toString()}`);
     const data = await res.json();
@@ -243,23 +572,18 @@ async function updatePrediction() {
     document.getElementById('rtRange').textContent = `range ${data.reaction_time_ms.low} – ${data.reaction_time_ms.high}`;
     document.getElementById('rtR2').textContent = `model test R² = ${data.reaction_time_ms.r2}`;
     setBar(document.getElementById('rtBar'), data.reaction_time_ms.value, 200, 340);
-
-    statusEl.textContent = modelInfo ? `Model trained on ${modelInfo.n_rows.toLocaleString()} rows.` : '';
   } catch (e) {
-    statusEl.textContent = 'Prediction request failed.';
+    document.getElementById('status').textContent = 'Prediction request failed.';
   }
 }
 
-function debouncedUpdate() {
-  clearTimeout(debounceTimer);
-  debounceTimer = setTimeout(updatePrediction, 60);
+function debouncedPopulation() {
+  clearTimeout(populationDebounce);
+  populationDebounce = setTimeout(updatePopulation, 60);
 }
+[ageEl, sleepEl, energyEl, genreEl].forEach(el => el.addEventListener('input', debouncedPopulation));
 
-[ageEl, sleepEl, energyEl, genreEl].forEach(el => {
-  el.addEventListener('input', debouncedUpdate);
-});
-
-loadModelInfo().then(updatePrediction);
+loadModelInfo().then(() => { updatePersonalZone(); updatePopulation(); });
 </script>
 </body>
 </html>

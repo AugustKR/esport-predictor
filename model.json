@@ -1,9 +1,4 @@
 {
-  "features": [
-    "Age",
-    "Sleep_Hours",
-    "Energy_Drinks"
-  ],
   "genres": [
     "Battle Royale",
     "FPS",
@@ -13,32 +8,59 @@
   "baseline_genre": "Battle Royale",
   "targets": {
     "APM": {
+      "features_used": [
+        "Age",
+        "Sleep_Hours",
+        "Energy_Drinks"
+      ],
       "coefficients": {
-        "Intercept": 104.82368546185502,
-        "Age": 0.05883103931522893,
-        "Sleep_Hours": 0.03166014683893714,
-        "Energy_Drinks": 10.190144282599851,
-        "FPS": 40.22275578456954,
-        "Fighting": 180.70185345100296,
-        "MOBA": 140.57501474583884
+        "Intercept": 104.82368546186736,
+        "Age": 0.05883103931524847,
+        "Sleep_Hours": 0.03166014683893693,
+        "Energy_Drinks": 10.190144282600173,
+        "FPS": 40.22275578457014,
+        "Fighting": 180.7018534510042,
+        "MOBA": 140.5750147458384
       },
       "train_r2": 0.6801,
       "test_r2": 0.6766,
       "residual_std": 43.7
     },
     "Reaction_Time_ms": {
+      "features_used": [
+        "Age",
+        "Sleep_Hours",
+        "Energy_Drinks"
+      ],
       "coefficients": {
-        "Intercept": 262.0400975248402,
-        "Age": 1.479906292763239,
-        "Sleep_Hours": -4.9435220816341205,
-        "Energy_Drinks": -0.33693916546979824,
-        "FPS": -0.17058092608361441,
-        "Fighting": -0.11452130036808035,
-        "MOBA": -0.11070393658373746
+        "Intercept": 262.040097524834,
+        "Age": 1.4799062927633113,
+        "Sleep_Hours": -4.943522081634038,
+        "Energy_Drinks": -0.33693916546980757,
+        "FPS": -0.17058092608370243,
+        "Fighting": -0.11452130036809201,
+        "MOBA": -0.11070393658381152
       },
       "train_r2": 0.2381,
       "test_r2": 0.2465,
       "residual_std": 16.59
+    },
+    "Heart_Rate_BPM": {
+      "features_used": [
+        "Age",
+        "Energy_Drinks"
+      ],
+      "coefficients": {
+        "Intercept": 78.91096534957052,
+        "Age": -0.10157726576135662,
+        "Energy_Drinks": 4.367658537166374,
+        "FPS": 1.5165864627928811,
+        "Fighting": 7.16373678406595,
+        "MOBA": 5.491105831742952
+      },
+      "train_r2": 0.2898,
+      "test_r2": 0.2911,
+      "residual_std": 8.14
     }
   },
   "n_rows": 250000,
@@ -55,5 +77,52 @@
       0,
       4
     ]
-  }
+  },
+  "heart_rate_age_buckets": [
+    {
+      "age_min": 16,
+      "age_max": 20,
+      "n": 77141,
+      "p50": 84.0,
+      "p75": 91.0,
+      "p90": 97.0,
+      "p95": 101.0
+    },
+    {
+      "age_min": 21,
+      "age_max": 25,
+      "n": 116084,
+      "p50": 84.0,
+      "p75": 90.0,
+      "p90": 97.0,
+      "p95": 100.0
+    },
+    {
+      "age_min": 26,
+      "age_max": 30,
+      "n": 51095,
+      "p50": 83.0,
+      "p75": 90.0,
+      "p90": 96.0,
+      "p95": 100.0
+    },
+    {
+      "age_min": 31,
+      "age_max": 35,
+      "n": 5553,
+      "p50": 83.0,
+      "p75": 90.0,
+      "p90": 96.0,
+      "p95": 100.0
+    },
+    {
+      "age_min": 36,
+      "age_max": 40,
+      "n": 127,
+      "p50": 82.0,
+      "p75": 88.0,
+      "p90": 95.0,
+      "p95": 99.0
+    }
+  ]
 }
