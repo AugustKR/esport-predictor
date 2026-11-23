@@ -2,6 +2,7 @@
 
 Two tabs, two different analytical framings of the same dataset:
 
+<<<<<<< HEAD
 - **Personal Zone** (default tab): centers the analysis on a single individual.
   Enter your age, energy drinks consumed, and game genre, and see your
   estimated heart rate and which "zone" it falls in, compared to real players
@@ -71,6 +72,8 @@ with these inputs:
 
 See `analysis.py` for the full model-fitting code and coefficients.
 
+=======
+>>>>>>> b41f92ab96c75b63d2abbad3c36e9b282000f350
 ## How to run
 
 ```bash
@@ -96,6 +99,7 @@ genre to see predicted APM and reaction time update live.
   percentiles, feature ranges).
 - `data/esports_gaming_biometrics_250k.csv` — source dataset.
 
+<<<<<<< HEAD
 ## Known limitations (worth mentioning in the report)
 
 - Reaction_Time_ms R² (0.25) is moderate, not strong — the Population
@@ -113,3 +117,5 @@ genre to see predicted APM and reaction time update live.
   claims about real human physiology.
 - The model is a simple linear regression with no interaction terms (e.g.
   Energy_Drinks × Game_Genre); that's a natural "future work" extension.
+=======
+>>>>>>> b41f92ab96c75b63d2abbad3c36e9b282000f350
